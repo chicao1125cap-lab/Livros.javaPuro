@@ -166,7 +166,6 @@ Também pretendo utilizar essa base para desenvolver aplicações mais completas
 
 ## 👨‍💻 Sobre mim
 
-Sou estudante de Análise e Desenvolvimento de Sistemas e direciono meus estudos para o desenvolvimento de software, com foco em Java e backend.
 
 Procuro entender não apenas como construir uma aplicação, mas também como suas partes se comunicam, quais responsabilidades cada componente deve assumir e por que determinadas decisões técnicas são tomadas.
 
