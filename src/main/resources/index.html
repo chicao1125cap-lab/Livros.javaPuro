@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livros - Java Puro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f4f4;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px #0001;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        #mensagem {
+            min-height: 22px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>📚 Sistema de Livros — Java puro</h1>
+
+<div class="card">
+
+    <h2>Cadastrar livro</h2>
+
+    <form id="formLivro">
+
+        <label>Título</label>
+        <input id="titulo" required placeholder="Ex.: O Hobbit">
+
+        <label>Autor</label>
+        <input id="autor" required placeholder="Ex.: J.R.R. Tolkien">
+
+        <label>Ano</label>
+        <input id="ano" type="number" required placeholder="1937">
+
+        <button type="submit">
+            Cadastrar
+        </button>
+
+    </form>
+
+    <p id="mensagem"></p>
+
+</div>
+
+<div class="card">
+
+    <h2>Livros cadastrados</h2>
+
+    <button onclick="carregarLivros()">
+        Atualizar lista
+    </button>
+
+    <table>
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Ano</th>
+        </tr>
+        </thead>
+
+        <tbody id="listaLivros"></tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+    const API = "/api/livros";
+
+    document
+        .getElementById("formLivro")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            // ==========================================
+            // 1. PEGAMOS O QUE O USUÁRIO DIGITOU
+            // ==========================================
+
+            const dados = {
+                titulo: document.getElementById("titulo").value,
+                autor: document.getElementById("autor").value,
+                ano: Number(document.getElementById("ano").value)
+            };
+
+            console.log("Objeto no Front-end:", dados);
+
+            // ==========================================
+            // 2. ENVIAMOS JSON PARA O JAVA
+            // ==========================================
+
+            const resposta = await fetch(API, {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(dados)
+            });
+
+            // ==========================================
+            // 3. JAVA DEVOLVE UM JSON
+            // ==========================================
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+            if (resposta.ok) {
+
+                const livroCriado =
+                    await resposta.json();
+
+                console.log(
+                    "Resposta recebida do Java:",
+                    livroCriado
+                );
+
+                mensagem.textContent =
+                    "Livro cadastrado! ID: "
+                    + livroCriado.id;
+
+                this.reset();
+
+                carregarLivros();
+
+            } else {
+
+                const erro =
+                    await resposta.json();
+
+                mensagem.textContent =
+                    "Erro: " + erro.erro;
+            }
+        });
+
+
+    async function carregarLivros() {
+
+        const resposta =
+            await fetch(API);
+
+        const livros =
+            await resposta.json();
+
+        document
+            .getElementById("listaLivros")
+            .innerHTML = livros.map(livro => `
+
+                <tr>
+                    <td>${livro.id}</td>
+                    <td>${livro.titulo}</td>
+                    <td>${livro.autor}</td>
+                    <td>${livro.ano}</td>
+                </tr>
+
+            `).join("");
+    }
+
+
+    carregarLivros();
+
+</script>
+
+</body>
+</html>

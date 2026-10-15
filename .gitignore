@@ -1,0 +1,12 @@
+# Arquivos do IntelliJ
+.idea/
+
+# Arquivos compilados
+target/
+
+# Banco de dados local H2
+data/*.mv.db
+data/*.trace.db
+
+# Logs
+*.log
